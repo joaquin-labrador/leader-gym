@@ -1,7 +1,8 @@
-package    com.leadergym.control.entity;
+package com.leadergym.control.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+
 @Entity
 @Table(name = "receipts")
 @Getter
@@ -9,7 +10,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Receipts{
+public class Receipts {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
