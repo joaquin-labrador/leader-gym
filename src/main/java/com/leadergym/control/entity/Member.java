@@ -29,6 +29,12 @@ public class Member {
     private String dni;
 
     @Column(nullable = false)
+    private String phoneNumber;
+
+    @Column()
+    private String email;
+
+    @Column(nullable = false)
     private boolean active;
 
     @ManyToOne
