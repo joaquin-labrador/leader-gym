@@ -1,7 +1,9 @@
 package com.leadergym.control.service.impl;
 
 import com.leadergym.control.common.enums.PlanType;
+import com.leadergym.control.common.mapper.MemberMapper;
 import com.leadergym.control.dto.MemberCredentialsDTO;
+import com.leadergym.control.dto.MemberResponseDto;
 import com.leadergym.control.entity.Member;
 import com.leadergym.control.entity.Plan;
 import com.leadergym.control.repository.MemberRepository;
@@ -43,18 +45,41 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public void getMemberByDni(String dni) {
-
+    public MemberResponseDto getMemberByDni(String dni) {
+        Member member = memberRepository.findByDni(dni);
+        if (member == null) {
+            throw new RuntimeException("Member not found with DNI: " + dni);
+        }
+        return MemberMapper.toMemberResponseDto(member);
     }
 
     @Override
     public void updateMember(String dni, MemberCredentialsDTO member) {
+        Member existingMember = memberRepository.findByDni(dni);
+        if (existingMember == null) {
+            throw new RuntimeException("Member not found with DNI: " + dni);
+        }
+        existingMember.setFirstName(member.getFirstName());
+        existingMember.setLastName(member.getLastName());
+        existingMember.setEmail(member.getEmail());
+        existingMember.setPhoneNumber(member.getPhoneNumber());
+        if (member.getPlanId() != null) {
+            Plan plan = planRepository.findById(member.getPlanId())
+                    .orElseThrow(() -> new RuntimeException("Plan not found with id: " + member.getPlanId()));
+            existingMember.setPlan(plan);
+            existingMember.setExpirationDate(getExpirationDate(plan.getDescription()));
+        }
+        memberRepository.save(existingMember);
 
     }
 
     @Override
     public void deleteMember(String dni) {
-
+        Member existingMember = memberRepository.findByDni(dni);
+        if (existingMember == null) {
+            throw new RuntimeException("Member not found with DNI: " + dni);
+        }
+        memberRepository.delete(existingMember);
     }
 
     private LocalDate getExpirationDate(String planName) {
