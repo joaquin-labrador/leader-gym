@@ -13,7 +13,7 @@ public class MemberCredentialsDTO {
     private String dni;
     private String firstName;
     private String lastName;
-    private String phoneNcdumber;
+    private String phoneNumber;
     private String email;
     private Long planId;
 }
