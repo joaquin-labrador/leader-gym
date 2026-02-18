@@ -3,6 +3,7 @@ package com.leadergym.control.controller;
 import com.leadergym.control.dto.MemberCredentialsDTO;
 import com.leadergym.control.dto.MemberResponseDto;
 import com.leadergym.control.service.MemberService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -19,13 +20,13 @@ public class MemberController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createMember(@RequestBody MemberCredentialsDTO member) {
+    public ResponseEntity<Void> createMember(@Valid @RequestBody MemberCredentialsDTO member) {
         memberService.createMember(member);
         return ResponseEntity.status(201).build();
     }
 
     @PutMapping("/{dni}")
-    public ResponseEntity<Void> updateMember(@PathVariable String dni, @RequestBody MemberCredentialsDTO member) {
+    public ResponseEntity<Void> updateMember(@Valid @PathVariable String dni, @RequestBody MemberCredentialsDTO member) {
         memberService.updateMember(dni, member);
         return ResponseEntity.noContent().build();
     }

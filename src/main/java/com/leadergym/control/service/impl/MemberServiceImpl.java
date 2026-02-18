@@ -44,7 +44,7 @@ public class MemberServiceImpl implements MemberService {
         newMember.setActive(true);
         newMember.setPlan(plan);
         newMember.setReceipts(null);
-        newMember.setExpirationDate(getExpirationDate(plan.getDescription()));
+        newMember.setExpirationDate(getExpirationDate(plan.getDurationInDays()));
         memberRepository.save(newMember);
     }
 
@@ -71,7 +71,7 @@ public class MemberServiceImpl implements MemberService {
             Plan plan = planRepository.findById(member.getPlanId())
                     .orElseThrow(() -> new RuntimeException("Plan not found with id: " + member.getPlanId()));
             existingMember.setPlan(plan);
-            existingMember.setExpirationDate(getExpirationDate(plan.getDescription()));
+            existingMember.setExpirationDate(getExpirationDate(plan.getDurationInDays()));
         }
         memberRepository.save(existingMember);
 
@@ -102,9 +102,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
 
-    private LocalDate getExpirationDate(String planName) {
-        PlanType planType = PlanType.valueOf(planName.toUpperCase());
-        int durationInDays = planType.getDurationInDays();
+    private LocalDate getExpirationDate(Integer durationInDays) {
         return utilService.calculateExpiration(durationInDays);
     }
 
