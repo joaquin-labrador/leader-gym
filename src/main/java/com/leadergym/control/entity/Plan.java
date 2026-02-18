@@ -45,4 +45,7 @@ public class Plan {
      */
     @Column(name = "weekly_visits")
     private Integer weeklyVisits;
+
+    @Column(nullable = false, name = "price")
+    private double price;
 }

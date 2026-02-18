@@ -10,6 +10,10 @@ import com.leadergym.control.repository.MemberRepository;
 import com.leadergym.control.repository.PlanRepository;
 import com.leadergym.control.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -82,10 +86,28 @@ public class MemberServiceImpl implements MemberService {
         memberRepository.delete(existingMember);
     }
 
+    @Override
+    public Page<MemberResponseDto> getPaginatedMembers(Pageable pageable) {
+
+        Pageable finalPageable = pageable.getSort().isUnsorted()
+                ? PageRequest.of(
+                pageable.getPageNumber(),
+                pageable.getPageSize(),
+                Sort.by("lastName").ascending().and(Sort.by("firstName").ascending())
+        )
+                : pageable;
+
+        return memberRepository.findAll(finalPageable)
+                .map(MemberMapper::toMemberResponseDto);
+    }
+
+
     private LocalDate getExpirationDate(String planName) {
         PlanType planType = PlanType.valueOf(planName.toUpperCase());
         int durationInDays = planType.getDurationInDays();
         return utilService.calculateExpiration(durationInDays);
     }
+
+
 }
 
