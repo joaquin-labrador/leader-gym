@@ -2,6 +2,7 @@ package com.leadergym.control.service;
 
 import com.leadergym.control.dto.MemberCredentialsDTO;
 import com.leadergym.control.dto.MemberResponseDto;
+import com.leadergym.control.dto.MemberUpdateCredentialsDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -11,7 +12,7 @@ public interface MemberService {
 
     MemberResponseDto getMemberByDni(String dni);
 
-    void updateMember(String dni, MemberCredentialsDTO member);
+    void updateMember(String dni, MemberUpdateCredentialsDTO member);
 
     void deleteMember(String dni);
 

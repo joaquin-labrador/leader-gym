@@ -4,8 +4,11 @@ import com.leadergym.control.common.enums.PlanType;
 import com.leadergym.control.common.mapper.MemberMapper;
 import com.leadergym.control.dto.MemberCredentialsDTO;
 import com.leadergym.control.dto.MemberResponseDto;
+import com.leadergym.control.dto.MemberUpdateCredentialsDTO;
 import com.leadergym.control.entity.Member;
 import com.leadergym.control.entity.Plan;
+import com.leadergym.control.exception.MemberNotFoundException;
+import com.leadergym.control.exception.PlanNotFoundException;
 import com.leadergym.control.repository.MemberRepository;
 import com.leadergym.control.repository.PlanRepository;
 import com.leadergym.control.service.MemberService;
@@ -34,7 +37,7 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public void createMember(MemberCredentialsDTO member) {
         Plan plan = planRepository.findById(member.getPlanId())
-                .orElseThrow(() -> new RuntimeException("Plan not found with id: " + member.getPlanId()));
+                .orElseThrow(() -> new PlanNotFoundException("Plan not found with id: " + member.getPlanId()));
         Member newMember = new Member();
         newMember.setDni(member.getDni());
         newMember.setFirstName(member.getFirstName());
@@ -52,16 +55,16 @@ public class MemberServiceImpl implements MemberService {
     public MemberResponseDto getMemberByDni(String dni) {
         Member member = memberRepository.findByDni(dni);
         if (member == null) {
-            throw new RuntimeException("Member not found with DNI: " + dni);
+            throw new MemberNotFoundException("Member not found with DNI: " + dni);
         }
         return MemberMapper.toMemberResponseDto(member);
     }
 
     @Override
-    public void updateMember(String dni, MemberCredentialsDTO member) {
+    public void updateMember(String dni, MemberUpdateCredentialsDTO member) {
         Member existingMember = memberRepository.findByDni(dni);
         if (existingMember == null) {
-            throw new RuntimeException("Member not found with DNI: " + dni);
+            throw new MemberNotFoundException("Member not found with DNI: " + dni);
         }
         existingMember.setFirstName(member.getFirstName());
         existingMember.setLastName(member.getLastName());
@@ -81,7 +84,7 @@ public class MemberServiceImpl implements MemberService {
     public void deleteMember(String dni) {
         Member existingMember = memberRepository.findByDni(dni);
         if (existingMember == null) {
-            throw new RuntimeException("Member not found with DNI: " + dni);
+            throw new MemberNotFoundException("Member not found with DNI: " + dni);
         }
         memberRepository.delete(existingMember);
     }

@@ -2,6 +2,7 @@ package com.leadergym.control.controller;
 
 import com.leadergym.control.dto.MemberCredentialsDTO;
 import com.leadergym.control.dto.MemberResponseDto;
+import com.leadergym.control.dto.MemberUpdateCredentialsDTO;
 import com.leadergym.control.service.MemberService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
@@ -26,7 +27,7 @@ public class MemberController {
     }
 
     @PutMapping("/{dni}")
-    public ResponseEntity<Void> updateMember(@Valid @PathVariable String dni, @RequestBody MemberCredentialsDTO member) {
+    public ResponseEntity<Void> updateMember(@PathVariable String dni, @Valid @RequestBody MemberUpdateCredentialsDTO member) {
         memberService.updateMember(dni, member);
         return ResponseEntity.noContent().build();
     }
