@@ -2,6 +2,7 @@ package com.leadergym.control.common.mapper;
 
 import com.leadergym.control.dto.MemberResponseDto;
 import com.leadergym.control.entity.Member;
+import com.leadergym.control.service.impl.UtilService;
 
 public class MemberMapper {
     public static MemberResponseDto toMemberResponseDto(Member member) {
@@ -14,6 +15,7 @@ public class MemberMapper {
                 .active(member.isActive())
                 .planDescription(member.getPlan().getDescription())
                 .expirationDate(member.getExpirationDate().toString())
+                .age(MapperUtils.calculateAge(member.getBirthDate()))
                 .build();
     }
 }

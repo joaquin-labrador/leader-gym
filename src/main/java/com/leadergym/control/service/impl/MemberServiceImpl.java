@@ -48,6 +48,7 @@ public class MemberServiceImpl implements MemberService {
         newMember.setPlan(plan);
         newMember.setReceipts(null);
         newMember.setExpirationDate(getExpirationDate(plan.getDurationInDays()));
+        newMember.setBirthDate(LocalDate.parse(member.getBirthDate()));
         memberRepository.save(newMember);
     }
 

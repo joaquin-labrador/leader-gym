@@ -27,12 +27,6 @@ public class MembershipFee {
     private Plan plan;
 
     /**
-     * Price of the subscription
-     */
-    @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal price;
-
-    /**
      * Date from which this fee is valid
      */
     @Column(name = "valid_from", nullable = false)

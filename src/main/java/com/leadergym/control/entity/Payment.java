@@ -34,4 +34,8 @@ public class Payment {
 
     @Column(nullable = false)
     private LocalDate endDate;
+
+    @Column(name = "is_active", nullable = false)
+    private boolean active;
+
 }

@@ -3,6 +3,7 @@ package com.leadergym.control.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 @Entity
@@ -22,5 +23,5 @@ public class Receipts {
     private Member member;
 
     @Column(nullable = false)
-    private Date date;
+    private LocalDate date;
 }

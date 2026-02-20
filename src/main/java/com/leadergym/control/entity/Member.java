@@ -25,6 +25,9 @@ public class Member {
     @Column(nullable = false)
     private String lastName;
 
+    @Column(nullable = false)
+    private LocalDate birthDate;
+
     @Column(nullable = false, unique = true)
     private String dni;
 

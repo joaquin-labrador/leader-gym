@@ -62,6 +62,7 @@ public class MemberServicesTest {
         req.setLastName("Pérez");
         req.setPhoneNumber("+5491199988877");
         req.setEmail("joaquinlabrador1010@gmail.com");
+        req.setBirthDate("1990-01-01");
         req.setPlanId(1L);
 
         doNothing().when(memberService).createMember(ArgumentMatchers.any(MemberCredentialsDTO.class));

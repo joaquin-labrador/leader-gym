@@ -16,4 +16,5 @@ public class MemberResponseDto {
     private boolean active;
     private String planDescription;
     private String expirationDate;
+    private int age;
 }
