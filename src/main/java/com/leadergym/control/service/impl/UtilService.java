@@ -39,4 +39,8 @@ public class UtilService {
         }
         return age;
     }
+
+    public LocalDate calculatePlanEndDate(LocalDate startDate, int durationInDays) {
+        return startDate.plusDays(durationInDays);
+    }
 }
