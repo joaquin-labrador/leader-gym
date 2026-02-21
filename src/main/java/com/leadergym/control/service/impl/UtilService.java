@@ -2,8 +2,8 @@ package com.leadergym.control.service.impl;
 
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Service
 public class UtilService {
@@ -16,14 +16,12 @@ public class UtilService {
         return !currentDate.isAfter(endDate);
     }
 
-    public LocalDateTime getFirstDayOfTheWeek() {
-        LocalDate currentDate = LocalDate.now();
-        return currentDate.with(java.time.DayOfWeek.MONDAY).atStartOfDay();
+    public LocalDate getFirstDayOfTheWeek() {
+        return LocalDate.now().with(DayOfWeek.MONDAY);
     }
 
-    public LocalDateTime getLastDayOfTheWeek() {
-        LocalDate currentDate = LocalDate.now();
-        return currentDate.with(java.time.DayOfWeek.SUNDAY).atTime(23, 59, 59);
+    public LocalDate getLastDayOfTheWeek() {
+        return LocalDate.now().with(DayOfWeek.SUNDAY);
     }
 
     public int calculateAge(LocalDate birthDate) {
