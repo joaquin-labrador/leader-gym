@@ -22,8 +22,9 @@ public class PaymentController {
         paymentService.processPayment(paymentRequest.getDni(), paymentRequest.getPlanId(), paymentRequest.getAmount());
         return ResponseEntity.ok().build();
     }
+
     @GetMapping("/history/{dni}")
-    public ResponseEntity<List<PaymentResponseDTO>> getPaymentHistoryByMember(String dni) {
+    public ResponseEntity<List<PaymentResponseDTO>> getPaymentHistoryByMember(@NotNull @PathVariable String dni) {
         return ResponseEntity.ok(paymentService.getPaymentHistoryByMember(dni));
     }
 }

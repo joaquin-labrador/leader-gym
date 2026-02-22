@@ -12,4 +12,5 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     Optional<Payment> findTopByMember_DniOrderByEndDateDesc(String dni);
     Optional<Payment> findTopByMember_DniAndActiveTrueOrderByEndDateDesc(String dni);
     List<Payment> findByMember_Dni(String dni);
+    List<Payment> findByMemberId(Long memberId);
 }

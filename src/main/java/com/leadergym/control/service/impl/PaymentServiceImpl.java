@@ -52,7 +52,11 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Override
     public List<PaymentResponseDTO> getPaymentHistoryByMember(String dni) {
-        List<Payment> paymentListByMember = paymentRepository.findByMember_Dni(dni);
+        Member member = memberRepository.findByDni(dni);
+        if (member == null) {
+            throw new MemberNotFoundException("Member not found with DNI: " + dni);
+        }
+        List<Payment> paymentListByMember = paymentRepository.findByMemberId(member.getId());
         if (paymentListByMember.isEmpty()) {
             throw new MemberNotFoundException("No payments found for member with DNI: " + dni);
         }

@@ -21,6 +21,8 @@ public class PaymentMapper {
                     dto.setFirstName(payment.getMember().getFirstName());
                     dto.setLastName(payment.getMember().getLastName());
                     dto.setAmountPaid(payment.getAmountPaid());
+                    dto.setEndDate(payment.getEndDate());
+                    dto.setStartDate(payment.getStartDate());
                     return dto;
                 })
                 .collect(Collectors.toList());
