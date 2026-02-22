@@ -1,12 +1,14 @@
 package com.leadergym.control.common.mapper;
 
-import com.leadergym.control.dto.MemberResponseDto;
+import com.leadergym.control.dto.MemberResponseDTO;
 import com.leadergym.control.entity.Member;
-import com.leadergym.control.service.impl.UtilService;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.stereotype.Component;
 
+@Component
 public class MemberMapper {
-    public static MemberResponseDto toMemberResponseDto(Member member) {
-        return MemberResponseDto.builder()
+    public static MemberResponseDTO toMemberResponseDto(@NotNull Member member) {
+        return MemberResponseDTO.builder()
                 .dni(member.getDni())
                 .firstName(member.getFirstName())
                 .lastName(member.getLastName())

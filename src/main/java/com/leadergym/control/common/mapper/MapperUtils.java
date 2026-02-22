@@ -1,7 +1,10 @@
 package com.leadergym.control.common.mapper;
 
+import org.springframework.stereotype.Component;
+
 import java.time.LocalDate;
 
+@Component
 public class MapperUtils {
     public static int calculateAge(LocalDate birthDate) {
         if (birthDate == null) {

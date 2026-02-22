@@ -1,9 +1,8 @@
 package com.leadergym.control.service.impl;
 
-import com.leadergym.control.common.enums.PlanType;
 import com.leadergym.control.common.mapper.MemberMapper;
 import com.leadergym.control.dto.MemberCredentialsDTO;
-import com.leadergym.control.dto.MemberResponseDto;
+import com.leadergym.control.dto.MemberResponseDTO;
 import com.leadergym.control.dto.MemberUpdateCredentialsDTO;
 import com.leadergym.control.entity.Member;
 import com.leadergym.control.entity.Plan;
@@ -53,7 +52,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public MemberResponseDto getMemberByDni(String dni) {
+    public MemberResponseDTO getMemberByDni(String dni) {
         Member member = memberRepository.findByDni(dni);
         if (member == null) {
             throw new MemberNotFoundException("Member not found with DNI: " + dni);
@@ -91,7 +90,7 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public Page<MemberResponseDto> getPaginatedMembers(Pageable pageable) {
+    public Page<MemberResponseDTO> getPaginatedMembers(Pageable pageable) {
 
         Pageable finalPageable = pageable.getSort().isUnsorted()
                 ? PageRequest.of(

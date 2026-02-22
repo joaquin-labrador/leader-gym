@@ -1,7 +1,7 @@
 package com.leadergym.control.controller;
 
 import com.leadergym.control.dto.MemberCredentialsDTO;
-import com.leadergym.control.dto.MemberResponseDto;
+import com.leadergym.control.dto.MemberResponseDTO;
 import com.leadergym.control.dto.MemberUpdateCredentialsDTO;
 import com.leadergym.control.service.MemberService;
 import jakarta.validation.Valid;
@@ -39,12 +39,12 @@ public class MemberController {
     }
 
     @GetMapping("/{dni}")
-    public ResponseEntity<MemberResponseDto> getMemberByDni(@PathVariable String dni) {
+    public ResponseEntity<MemberResponseDTO> getMemberByDni(@PathVariable String dni) {
         return ResponseEntity.ok(memberService.getMemberByDni(dni));
     }
 
     @GetMapping
-    public ResponseEntity<Page<MemberResponseDto>> getMembers(Pageable pageable) {
+    public ResponseEntity<Page<MemberResponseDTO>> getMembers(Pageable pageable) {
         return ResponseEntity.ok(memberService.getPaginatedMembers(pageable));
     }
 }

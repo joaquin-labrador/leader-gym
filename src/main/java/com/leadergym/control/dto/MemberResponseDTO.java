@@ -7,7 +7,7 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
-public class MemberResponseDto {
+public class MemberResponseDTO {
     private String dni;
     private String firstName;
     private String lastName;
