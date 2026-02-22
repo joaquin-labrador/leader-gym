@@ -2,16 +2,15 @@ package com.leadergym.control.dto;
 
 import lombok.*;
 
-import java.time.LocalDate;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Builder
-public class ReceiptsResponseDTO {
+public class PaymentResponseDTO {
     private String dni;
     private String firstName;
     private String lastName;
-    private LocalDate date;
+    private String planName;
+    private double amountPaid;
 }

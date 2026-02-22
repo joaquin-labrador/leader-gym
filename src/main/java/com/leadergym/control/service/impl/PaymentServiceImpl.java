@@ -1,5 +1,7 @@
 package com.leadergym.control.service.impl;
 
+import com.leadergym.control.common.mapper.PaymentMapper;
+import com.leadergym.control.dto.PaymentResponseDTO;
 import com.leadergym.control.entity.Member;
 import com.leadergym.control.entity.Payment;
 import com.leadergym.control.entity.Plan;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
@@ -43,6 +46,16 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setStartDate(LocalDate.now());
         payment.setEndDate(utilService.calculatePlanEndDate(payment.getStartDate(), plan.getDurationInDays()));
         payment.setActive(true);
+        payment.setAmountPaid(amount);
         paymentRepository.save(payment);
+    }
+
+    @Override
+    public List<PaymentResponseDTO> getPaymentHistoryByMember(String dni) {
+        List<Payment> paymentListByMember = paymentRepository.findByMember_Dni(dni);
+        if (paymentListByMember.isEmpty()) {
+            throw new MemberNotFoundException("No payments found for member with DNI: " + dni);
+        }
+        return PaymentMapper.toDtoList(paymentListByMember);
     }
 }

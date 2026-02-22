@@ -5,8 +5,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Repository
 public interface ReceiptsRepository extends JpaRepository<Receipts, Long> {
     long countByMemberDniAndDateBetween(String dni, LocalDate start, LocalDate end);
+    List<Receipts> findByMemberDni(String dni);
 }

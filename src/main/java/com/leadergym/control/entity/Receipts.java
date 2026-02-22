@@ -24,4 +24,5 @@ public class Receipts {
 
     @Column(nullable = false)
     private LocalDate date;
+
 }

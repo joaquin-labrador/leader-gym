@@ -2,6 +2,7 @@ package com.leadergym.control.controller;
 
 import com.leadergym.control.exception.MemberNotFoundException;
 import com.leadergym.control.exception.MemberNotPayException;
+import com.leadergym.control.exception.ReceiptsNotFound;
 import com.leadergym.control.exception.WeeklyVisitLimitExceededException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -60,6 +61,14 @@ public class GlobalExceptionHandler {
 
         return ResponseEntity.badRequest().body(
                 new ApiError(Instant.now(), 400, "Bad Request", "Validation failed", req.getRequestURI(), fields)
+        );
+    }
+
+    @ExceptionHandler(ReceiptsNotFound.class)
+    public ResponseEntity<ApiError> handleReceiptsNotFound(ReceiptsNotFound ex,
+                                                          jakarta.servlet.http.HttpServletRequest req) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                new ApiError(Instant.now(), 404, "Not Found", ex.getMessage(), req.getRequestURI(), null)
         );
     }
 

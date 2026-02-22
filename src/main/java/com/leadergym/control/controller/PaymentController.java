@@ -1,15 +1,15 @@
 package com.leadergym.control.controller;
 
 import com.leadergym.control.dto.PaymentRequestDTO;
+import com.leadergym.control.dto.PaymentResponseDTO;
 import com.leadergym.control.service.PaymentService;
 import jakarta.validation.Valid;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/payment")
@@ -21,5 +21,9 @@ public class PaymentController {
     public ResponseEntity<Void> processPayment(@Valid @RequestBody @NotNull PaymentRequestDTO paymentRequest) {
         paymentService.processPayment(paymentRequest.getDni(), paymentRequest.getPlanId(), paymentRequest.getAmount());
         return ResponseEntity.ok().build();
+    }
+    @GetMapping("/history/{dni}")
+    public ResponseEntity<List<PaymentResponseDTO>> getPaymentHistoryByMember(String dni) {
+        return ResponseEntity.ok(paymentService.getPaymentHistoryByMember(dni));
     }
 }
