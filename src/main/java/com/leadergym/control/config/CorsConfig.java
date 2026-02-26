@@ -18,12 +18,12 @@ public class CorsConfig {
         // Allow patterns for Railway domains, GitHub Pages, and localhost
         config.setAllowedOriginPatterns(List.of(
                 "https://*.up.railway.app",
-                "https://joaquin-labrador.github.io",
-                "http://localhost:5173",
-                "http://localhost:3000",
-                "http://localhost:4200",
-                "http://localhost:8080",
-                "http://localhost:5174"
+                //"https://joaquin-labrador.github.io",
+                //"http://localhost:5173",
+                //"http://localhost:3000",
+                //"http://localhost:4200",
+                //"http://localhost:8080",
+                //"http://localhost:5174"
         ));
 
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH"));
