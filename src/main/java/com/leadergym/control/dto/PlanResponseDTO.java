@@ -8,6 +8,7 @@ import lombok.*;
 @Setter
 @Builder
 public class PlanResponseDTO {
+    private Long id;
     private String name;
     private Double price;
 }

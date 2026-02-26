@@ -17,6 +17,7 @@ public class PlanMapper {
         PlanResponseDTO dto = new PlanResponseDTO();
         dto.setName(plan.getCode());
         dto.setPrice(plan.getPrice());
+        dto.setId(plan.getId());
         // añadir más campos según la entidad/DTO
         return dto;
     }
