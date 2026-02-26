@@ -6,9 +6,11 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface ReceiptsRepository extends JpaRepository<Receipts, Long> {
     long countByMemberDniAndDateBetween(String dni, LocalDate start, LocalDate end);
     List<Receipts> findByMemberDni(String dni);
+    Optional<Receipts> findTopByMember_DniOrderByDateDesc(String dni);
 }
