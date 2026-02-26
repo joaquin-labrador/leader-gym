@@ -15,18 +15,20 @@ public class CorsConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
 
-        // ✅ Recomendado: poné el dominio real del frontend
-        // Ej: https://tu-frontend.vercel.app  o  https://<user>.github.io
-        config.setAllowedOrigins(List.of(
+        // Allow patterns for Railway domains, GitHub Pages, and localhost
+        config.setAllowedOriginPatterns(List.of(
+                "https://*.up.railway.app",
+                "https://joaquin-labrador.github.io",
                 "http://localhost:5173",
-                "http://localhost:3000"
-                // "https://TU-DOMINIO-FRONTEND.com"
+                "http://localhost:3000",
+                "http://localhost:4200",
+                "http://localhost:8080"
         ));
 
-        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-        config.setAllowedHeaders(List.of("*"));
-        config.setExposedHeaders(List.of("Location"));
-        config.setAllowCredentials(false); // dejalo false si no usás cookies/sesión
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD", "PATCH"));
+        config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept", "Origin", "X-Requested-With"));
+        config.setExposedHeaders(List.of("Location", "Access-Control-Allow-Origin", "Access-Control-Allow-Credentials"));
+        config.setAllowCredentials(false); // No cookies/session
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
