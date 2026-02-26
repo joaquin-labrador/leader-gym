@@ -16,6 +16,7 @@ public class MemberMapper {
                 .email(member.getEmail())
                 .active(member.isActive())
                 .planDescription(member.getPlan().getCode())
+                .planId(member.getPlan().getId())
                 .expirationDate(member.getExpirationDate().toString())
                 .age(MapperUtils.calculateAge(member.getBirthDate()))
                 .build();

@@ -17,4 +17,5 @@ public class MemberResponseDTO {
     private String planDescription;
     private String expirationDate;
     private int age;
+    private Long planId;
 }
