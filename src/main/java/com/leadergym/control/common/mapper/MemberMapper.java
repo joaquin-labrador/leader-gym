@@ -15,7 +15,7 @@ public class MemberMapper {
                 .phoneNumber(member.getPhoneNumber())
                 .email(member.getEmail())
                 .active(member.isActive())
-                .planDescription(member.getPlan().getDescription())
+                .planDescription(member.getPlan().getCode())
                 .expirationDate(member.getExpirationDate().toString())
                 .age(MapperUtils.calculateAge(member.getBirthDate()))
                 .build();
