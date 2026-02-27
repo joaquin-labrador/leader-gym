@@ -3,9 +3,9 @@ package com.leadergym.control.controller;
 import com.leadergym.control.dto.MemberCredentialsDTO;
 import com.leadergym.control.dto.MemberResponseDTO;
 import com.leadergym.control.dto.MemberUpdateCredentialsDTO;
+import com.leadergym.control.dto.PageResponse;
 import com.leadergym.control.service.MemberService;
 import jakarta.validation.Valid;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -44,7 +44,7 @@ public class MemberController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<MemberResponseDTO>> getMembers(Pageable pageable) {
-        return ResponseEntity.ok(memberService.getPaginatedMembers(pageable));
+    public ResponseEntity<PageResponse<MemberResponseDTO>> getMembers(Pageable pageable) {
+        return ResponseEntity.ok(PageResponse.from(memberService.getPaginatedMembers(pageable)));
     }
 }

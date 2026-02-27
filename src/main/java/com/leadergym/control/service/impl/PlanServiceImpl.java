@@ -33,6 +33,8 @@ public class PlanServiceImpl implements PlanService {
         if (plans.isEmpty()) {
             throw new PlanNotFoundException("No plans found");
         }
+        //Order by price ascending
+        plans.sort((p1, p2) -> Double.compare(p2.getPrice(), p1.getPrice()));
         return PlanMapper.toDtoList(plans);
 
     }

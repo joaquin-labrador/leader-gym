@@ -43,7 +43,7 @@ public class MemberServiceImpl implements MemberService {
         newMember.setLastName(member.getLastName());
         newMember.setEmail(member.getEmail());
         newMember.setPhoneNumber(member.getPhoneNumber());
-        newMember.setActive(true);
+        newMember.setActive(false);
         newMember.setPlan(plan);
         newMember.setReceipts(null);
         newMember.setExpirationDate(getExpirationDate(plan.getDurationInDays()));

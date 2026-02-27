@@ -48,6 +48,10 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setActive(true);
         payment.setAmountPaid(amount);
         paymentRepository.save(payment);
+
+        member.setActive(true);
+        member.setExpirationDate(payment.getEndDate());
+        memberRepository.save(member);
     }
 
     @Override
