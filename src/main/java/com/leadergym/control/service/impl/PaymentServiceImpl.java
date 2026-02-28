@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
@@ -49,6 +50,9 @@ public class PaymentServiceImpl implements PaymentService {
         payment.setAmountPaid(amount);
         paymentRepository.save(payment);
 
+        if(!Objects.equals(member.getPlan().getId(), planId)) {
+            member.setPlan(plan);
+        }
         member.setActive(true);
         member.setExpirationDate(payment.getEndDate());
         memberRepository.save(member);
