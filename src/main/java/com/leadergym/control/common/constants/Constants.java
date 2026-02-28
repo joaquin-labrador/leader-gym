@@ -1,5 +1,7 @@
 package com.leadergym.control.common.constants;
 
+import java.time.ZoneId;
+
 public class Constants {
     public static final String MEMBER_NOT_FOUND = "Member not found with ID: ";
     public static final String PLAN_NOT_FOUND = "Plan not found with ID: ";
@@ -18,4 +20,5 @@ public class Constants {
     public static final int DURATION_WEEKLY = 7;
     public static final int DURATION_DAILY = 1;
 
+    public static final ZoneId ARGENTINA_TIME_ZONE = ZoneId.of("America/Argentina/Buenos_Aires");
 }
