@@ -77,4 +77,11 @@ public class GlobalExceptionHandler {
         );
     }
 
+    @ExceptionHandler(MemberHasPaymentException.class)
+    public ResponseEntity<ApiError> handleMemberHasPayment(MemberHasPaymentException ex,
+                                                          jakarta.servlet.http.HttpServletRequest req) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                new ApiError(Instant.now(), 400, "Bad Request", ex.getMessage(), req.getRequestURI(), null)
+        );
+    }
 }

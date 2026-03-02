@@ -1,14 +1,17 @@
 package com.leadergym.control.service.impl;
 
+import com.leadergym.control.common.constants.Constants;
 import com.leadergym.control.common.mapper.PaymentMapper;
 import com.leadergym.control.dto.PaymentResponseDTO;
 import com.leadergym.control.entity.Member;
 import com.leadergym.control.entity.Payment;
+import com.leadergym.control.entity.PaymentHistory;
 import com.leadergym.control.entity.Plan;
 import com.leadergym.control.exception.MemberNotFoundException;
 import com.leadergym.control.exception.NotCorrectPaymentPlanException;
 import com.leadergym.control.exception.PlanNotFoundException;
 import com.leadergym.control.repository.MemberRepository;
+import com.leadergym.control.repository.PaymentHistoryRepository;
 import com.leadergym.control.repository.PaymentRepository;
 import com.leadergym.control.repository.PlanRepository;
 import com.leadergym.control.service.PaymentService;
@@ -29,6 +32,8 @@ public class PaymentServiceImpl implements PaymentService {
     private MemberRepository memberRepository;
     @Autowired
     private PaymentRepository paymentRepository;
+    @Autowired
+    private PaymentHistoryRepository paymentHistoryRepository;
 
     @Override
     public void processPayment(String dni, Long planId, Double amount) {
@@ -44,11 +49,22 @@ public class PaymentServiceImpl implements PaymentService {
         Payment payment = new Payment();
         payment.setMember(member);
         payment.setPlan(plan);
-        payment.setStartDate(LocalDate.now());
+        payment.setStartDate(LocalDate.now(Constants.ARGENTINA_TIME_ZONE));
         payment.setEndDate(utilService.calculatePlanEndDate(payment.getStartDate(), plan.getDurationInDays()));
         payment.setActive(true);
         payment.setAmountPaid(amount);
         paymentRepository.save(payment);
+
+
+        //Save payment history
+        PaymentHistory paymentHistory = new PaymentHistory();
+        paymentHistory.setMemberDni(member.getDni());
+        paymentHistory.setPlanName(member.getPlan().getCode());
+        paymentHistory.setAmountPaid(amount);
+        paymentHistory.setStartDate(payment.getStartDate());
+        paymentHistory.setEndDate(payment.getEndDate());
+        paymentHistoryRepository.save(paymentHistory);
+
 
         if(!Objects.equals(member.getPlan().getId(), planId)) {
             member.setPlan(plan);

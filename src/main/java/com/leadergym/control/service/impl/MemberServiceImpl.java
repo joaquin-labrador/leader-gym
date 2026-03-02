@@ -5,10 +5,13 @@ import com.leadergym.control.dto.MemberCredentialsDTO;
 import com.leadergym.control.dto.MemberResponseDTO;
 import com.leadergym.control.dto.MemberUpdateCredentialsDTO;
 import com.leadergym.control.entity.Member;
+import com.leadergym.control.entity.Payment;
 import com.leadergym.control.entity.Plan;
+import com.leadergym.control.exception.MemberHasPaymentException;
 import com.leadergym.control.exception.MemberNotFoundException;
 import com.leadergym.control.exception.PlanNotFoundException;
 import com.leadergym.control.repository.MemberRepository;
+import com.leadergym.control.repository.PaymentRepository;
 import com.leadergym.control.repository.PlanRepository;
 import com.leadergym.control.service.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +22,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Service
 public class MemberServiceImpl implements MemberService {
@@ -31,6 +35,9 @@ public class MemberServiceImpl implements MemberService {
 
     @Autowired
     private UtilService utilService;
+
+    @Autowired
+    private PaymentRepository paymentRepository;
 
 
     @Override
@@ -54,10 +61,14 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberResponseDTO getMemberByDni(String dni) {
         Member member = memberRepository.findByDni(dni);
+        Payment lastPayment = paymentRepository.findTopByActiveTrueOrderByEndDateDesc();
         if (member == null) {
             throw new MemberNotFoundException("Member not found with DNI: " + dni);
         }
-        return MemberMapper.toMemberResponseDto(member);
+        if(lastPayment == null || !lastPayment.isActive() || lastPayment.getEndDate().isBefore(LocalDate.now())) {
+            return MemberMapper.toMemberResponseDto(member, false);
+        }
+        return MemberMapper.toMemberResponseDto(member,true);
     }
 
     @Override
@@ -82,11 +93,13 @@ public class MemberServiceImpl implements MemberService {
 
     @Override
     public void deleteMember(String dni) {
-        Member existingMember = memberRepository.findByDni(dni);
-        if (existingMember == null) {
-            throw new MemberNotFoundException("Member not found with DNI: " + dni);
+        Member member = memberRepository.findByDni(dni);
+        if (member == null) throw new MemberNotFoundException("Member not found with DNI: " + dni);
+
+        if (paymentRepository.existsByMember_DniAndActiveTrue(dni)) {
+            throw new MemberHasPaymentException("Cannot delete member with active payments. DNI: " + dni);
         }
-        memberRepository.delete(existingMember);
+        memberRepository.delete(member);
     }
 
     @Override
@@ -100,8 +113,9 @@ public class MemberServiceImpl implements MemberService {
         )
                 : pageable;
 
-        return memberRepository.findAll(finalPageable)
-                .map(MemberMapper::toMemberResponseDto);
+        Payment lastPayment = paymentRepository.findTopByActiveTrueOrderByEndDateDesc();
+        boolean isPaid = lastPayment != null && lastPayment.isActive() && (lastPayment.getEndDate().isAfter(LocalDate.now()) || lastPayment.getEndDate().isEqual(LocalDate.now()));
+        return memberRepository.findAll(finalPageable).map(member -> MemberMapper.toMemberResponseDto(member, isPaid));
     }
 
 
