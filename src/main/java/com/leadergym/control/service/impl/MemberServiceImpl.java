@@ -61,10 +61,13 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public MemberResponseDTO getMemberByDni(String dni) {
         Member member = memberRepository.findByDni(dni);
-        Payment lastPayment = paymentRepository.findTopByActiveTrueOrderByEndDateDesc();
+
         if (member == null) {
             throw new MemberNotFoundException("Member not found with DNI: " + dni);
         }
+        Payment lastPayment = paymentRepository
+                .findActivePaymentsOrderByEndDateDesc(PageRequest.of(0, 1))
+                .stream().findFirst().orElse(null);
         if(lastPayment == null || !lastPayment.isActive() || lastPayment.getEndDate().isBefore(LocalDate.now())) {
             return MemberMapper.toMemberResponseDto(member, false);
         }
@@ -113,8 +116,10 @@ public class MemberServiceImpl implements MemberService {
         )
                 : pageable;
 
-        Payment lastPayment = paymentRepository.findTopByActiveTrueOrderByEndDateDesc();
-        boolean isPaid = lastPayment != null && lastPayment.isActive() && (lastPayment.getEndDate().isAfter(LocalDate.now()) || lastPayment.getEndDate().isEqual(LocalDate.now()));
+        Payment lastPayment = paymentRepository
+                .findActivePaymentsOrderByEndDateDesc(PageRequest.of(0, 1))
+                .stream().findFirst().orElse(null);
+        boolean isPaid = lastPayment != null && lastPayment.isActive() && lastPayment.getEndDate().isAfter(LocalDate.now());
         return memberRepository.findAll(finalPageable).map(member -> MemberMapper.toMemberResponseDto(member, isPaid));
     }
 

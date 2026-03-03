@@ -7,7 +7,7 @@ import java.util.List;
 
 @Service
 public interface PaymentService {
-     void processPayment(String dni, Long planId, Double amount);
+     void processPayment(String dni, Long planId, Double amount, String paymentMethod);
      List<PaymentResponseDTO> getPaymentHistoryByMember(String dni);
 }
 

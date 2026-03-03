@@ -17,4 +17,6 @@ public class PaymentRequestDTO {
     private Long planId;
     @Positive(message = "Amount must be a positive number")
     private Double amount;
+    @NotBlank(message = "Payment method is required")
+    private String paymentMethod;
 }

@@ -1,5 +1,6 @@
 package com.leadergym.control.entity;
 
+import com.leadergym.control.common.enums.PaymentMethod;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,10 +29,11 @@ public class PaymentHistory {
     @Column(name = "amount_paid", nullable = false)
     private double amountPaid;
 
-    @Column(name = "start_date", nullable = false)
-    private LocalDate startDate;
+    @Column(name = "payment_date", nullable = false)
+    private LocalDate paymentDate;
 
-    @Column(name = "end_date", nullable = false)
-    private LocalDate endDate;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "payment_method", length = 20)
+    private PaymentMethod paymentMethod;
 
 }

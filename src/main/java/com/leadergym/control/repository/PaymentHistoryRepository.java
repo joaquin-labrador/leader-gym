@@ -2,8 +2,11 @@ package com.leadergym.control.repository;
 
 import com.leadergym.control.entity.PaymentHistory;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface PaymentHistoryRepository extends JpaRepository<PaymentHistory, Long> {
+public interface PaymentHistoryRepository
+        extends JpaRepository<PaymentHistory, Long>,
+        JpaSpecificationExecutor<PaymentHistory> {
 }

@@ -1,6 +1,7 @@
 package com.leadergym.control.service.impl;
 
 import com.leadergym.control.common.constants.Constants;
+import com.leadergym.control.common.enums.PaymentMethod;
 import com.leadergym.control.common.mapper.PaymentMapper;
 import com.leadergym.control.dto.PaymentResponseDTO;
 import com.leadergym.control.entity.Member;
@@ -36,7 +37,7 @@ public class PaymentServiceImpl implements PaymentService {
     private PaymentHistoryRepository paymentHistoryRepository;
 
     @Override
-    public void processPayment(String dni, Long planId, Double amount) {
+    public void processPayment(String dni, Long planId, Double amount, String paymentMethod) {
         Member member = memberRepository.findByDni(dni);
         if (member == null) {
             throw new MemberNotFoundException("Member not found with DNI: " + dni);
@@ -59,14 +60,14 @@ public class PaymentServiceImpl implements PaymentService {
         //Save payment history
         PaymentHistory paymentHistory = new PaymentHistory();
         paymentHistory.setMemberDni(member.getDni());
-        paymentHistory.setPlanName(member.getPlan().getCode());
+        paymentHistory.setPlanName(plan.getCode());
         paymentHistory.setAmountPaid(amount);
-        paymentHistory.setStartDate(payment.getStartDate());
-        paymentHistory.setEndDate(payment.getEndDate());
+        paymentHistory.setPaymentDate(LocalDate.now(Constants.ARGENTINA_TIME_ZONE));
+        paymentHistory.setPaymentMethod(PaymentMethod.valueOf(paymentMethod.toUpperCase()));
         paymentHistoryRepository.save(paymentHistory);
 
 
-        if(!Objects.equals(member.getPlan().getId(), planId)) {
+        if (!Objects.equals(member.getPlan().getId(), planId)) {
             member.setPlan(plan);
         }
         member.setActive(true);
