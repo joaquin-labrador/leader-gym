@@ -10,7 +10,7 @@ import java.time.LocalDate;
 
 @Component
 public class MemberMapper {
-    public static MemberResponseDTO toMemberResponseDto(@NotNull Member member, boolean isPaid) {
+    public static MemberResponseDTO toMemberResponseDto(@NotNull Member member) {
         LocalDate today = LocalDate.now(Constants.ARGENTINA_TIME_ZONE);
         return MemberResponseDTO.builder()
                 .dni(member.getDni())
@@ -18,7 +18,7 @@ public class MemberMapper {
                 .lastName(member.getLastName())
                 .phoneNumber(member.getPhoneNumber())
                 .email(member.getEmail())
-                .active((today.isBefore(member.getExpirationDate()) || today.isEqual(member.getExpirationDate())) && member.isActive())
+                .active(member.isActive())
                 .planDescription(member.getPlan().getCode())
                 .planId(member.getPlan().getId())
                 .expirationDate(member.getExpirationDate().toString())

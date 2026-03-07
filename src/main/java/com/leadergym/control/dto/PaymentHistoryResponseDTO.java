@@ -13,4 +13,5 @@ public class PaymentHistoryResponseDTO {
     private double amountPaid;
     private String paymentMethod;
     private String paymentDate;
+    private Long paymentId;
 }

@@ -27,4 +27,10 @@ public class PaymentController {
     public ResponseEntity<List<PaymentResponseDTO>> getPaymentHistoryByMember(@NotNull @PathVariable String dni) {
         return ResponseEntity.ok(paymentService.getPaymentHistoryByMember(dni));
     }
+
+    @DeleteMapping("/history/{dni}")
+    public ResponseEntity<Void> deleteLastPayment(@NotNull @PathVariable Long id) {
+        paymentService.deleteLastPayment(id);
+        return ResponseEntity.ok().build();
+    }
 }

@@ -18,6 +18,7 @@ public class PaymentHistoryMapper {
         if (ph == null) return null;
 
         return PaymentHistoryResponseDTO.builder()
+                .paymentId(ph.getId())
                 .memberDni(ph.getMemberDni())
                 .planDescription(ph.getPlanName())
                 .amountPaid(ph.getAmountPaid())

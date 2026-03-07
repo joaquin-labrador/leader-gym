@@ -22,6 +22,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 public class PaymentServiceImpl implements PaymentService {
@@ -59,6 +60,7 @@ public class PaymentServiceImpl implements PaymentService {
 
         //Save payment history
         PaymentHistory paymentHistory = new PaymentHistory();
+        paymentHistory.setPayment(payment);
         paymentHistory.setMemberDni(member.getDni());
         paymentHistory.setPlanName(plan.getCode());
         paymentHistory.setAmountPaid(amount);
@@ -86,5 +88,17 @@ public class PaymentServiceImpl implements PaymentService {
             throw new MemberNotFoundException("No payments found for member with DNI: " + dni);
         }
         return PaymentMapper.toDtoList(paymentListByMember);
+    }
+
+    @Override
+    public void deleteLastPayment(Long dni) {
+        //Delete payment history
+        PaymentHistory lastPaymentHistory = paymentHistoryRepository.findByPayment_Id(dni);
+        if (lastPaymentHistory != null) {
+            paymentHistoryRepository.delete(lastPaymentHistory);
+        }
+        //Delete payment
+        Optional<Payment> lastPayment = paymentRepository.findById(dni);
+        lastPayment.ifPresent(payment -> paymentRepository.delete(payment));
     }
 }

@@ -1,5 +1,6 @@
 package com.leadergym.control.service.impl;
 
+import com.leadergym.control.common.constants.Constants;
 import com.leadergym.control.common.mapper.MemberMapper;
 import com.leadergym.control.dto.MemberCredentialsDTO;
 import com.leadergym.control.dto.MemberResponseDTO;
@@ -14,6 +15,7 @@ import com.leadergym.control.repository.MemberRepository;
 import com.leadergym.control.repository.PaymentRepository;
 import com.leadergym.control.repository.PlanRepository;
 import com.leadergym.control.service.MemberService;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -22,7 +24,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 @Service
 public class MemberServiceImpl implements MemberService {
@@ -65,13 +66,9 @@ public class MemberServiceImpl implements MemberService {
         if (member == null) {
             throw new MemberNotFoundException("Member not found with DNI: " + dni);
         }
-        Payment lastPayment = paymentRepository
-                .findActivePaymentsOrderByEndDateDesc(PageRequest.of(0, 1))
-                .stream().findFirst().orElse(null);
-        if(lastPayment == null || !lastPayment.isActive() || lastPayment.getEndDate().isBefore(LocalDate.now())) {
-            return MemberMapper.toMemberResponseDto(member, false);
-        }
-        return MemberMapper.toMemberResponseDto(member,true);
+        boolean isActive = isMemberActive(member);
+        member.setActive(isActive);
+        return MemberMapper.toMemberResponseDto(member);
     }
 
     @Override
@@ -116,11 +113,15 @@ public class MemberServiceImpl implements MemberService {
         )
                 : pageable;
 
-        Payment lastPayment = paymentRepository
-                .findActivePaymentsOrderByEndDateDesc(PageRequest.of(0, 1))
-                .stream().findFirst().orElse(null);
-        boolean isPaid = lastPayment != null && lastPayment.isActive() && lastPayment.getEndDate().isAfter(LocalDate.now());
-        return memberRepository.findAll(finalPageable).map(member -> MemberMapper.toMemberResponseDto(member, isPaid));
+        // Fetch members with pagination
+        Page<Member> memberPage = memberRepository.findAll(finalPageable);
+        //Validate if members are active or not
+        // Map members to DTOs
+        return memberPage.map(member -> {
+            boolean isActive = isMemberActive(member);
+            member.setActive(isActive);
+            return MemberMapper.toMemberResponseDto(member);
+        });
     }
 
 
@@ -128,6 +129,9 @@ public class MemberServiceImpl implements MemberService {
         return utilService.calculateExpiration(durationInDays);
     }
 
-
+    private boolean isMemberActive(@NotNull Member member) {
+        Payment lastPayment = paymentRepository.findTopByMember_DniOrderByStartDateDesc(member.getDni()).stream().findFirst().orElse(null);
+        return lastPayment != null && lastPayment.isActive() && lastPayment.getEndDate().isAfter(LocalDate.now(Constants.ARGENTINA_TIME_ZONE));
+    }
 }
 

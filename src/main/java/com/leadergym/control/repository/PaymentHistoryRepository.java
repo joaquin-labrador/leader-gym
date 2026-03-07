@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
 public interface PaymentHistoryRepository
         extends JpaRepository<PaymentHistory, Long>,
         JpaSpecificationExecutor<PaymentHistory> {
+    PaymentHistory findByPayment_Id(Long paymentId);
 }

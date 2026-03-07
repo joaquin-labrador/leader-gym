@@ -36,4 +36,7 @@ public class PaymentHistory {
     @Column(name = "payment_method", length = 20)
     private PaymentMethod paymentMethod;
 
+    @OneToOne
+    @JoinColumn(name = "payment_id", nullable = false)
+    private Payment payment;
 }
