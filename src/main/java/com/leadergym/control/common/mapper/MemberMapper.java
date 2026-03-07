@@ -23,6 +23,7 @@ public class MemberMapper {
                 .planId(member.getPlan().getId())
                 .expirationDate(member.getExpirationDate().toString())
                 .age(MapperUtils.calculateAge(member.getBirthDate()))
+                .birthDate(member.getBirthDate())
                 .build();
     }
 }

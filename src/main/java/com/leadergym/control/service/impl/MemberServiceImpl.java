@@ -81,11 +81,11 @@ public class MemberServiceImpl implements MemberService {
         existingMember.setLastName(member.getLastName());
         existingMember.setEmail(member.getEmail());
         existingMember.setPhoneNumber(member.getPhoneNumber());
+
         if (member.getPlanId() != null) {
             Plan plan = planRepository.findById(member.getPlanId())
                     .orElseThrow(() -> new RuntimeException("Plan not found with id: " + member.getPlanId()));
             existingMember.setPlan(plan);
-            existingMember.setExpirationDate(getExpirationDate(plan.getDurationInDays()));
         }
         memberRepository.save(existingMember);
 

@@ -30,4 +30,6 @@ public class MemberUpdateCredentialsDTO {
     @Positive(message = "Plan ID must be a positive number")
     @NotNull(message = "Plan ID cannot be null")
     private Long planId;
+    @NotBlank(message = "Birth date is required")
+    private String birthDate;
 }

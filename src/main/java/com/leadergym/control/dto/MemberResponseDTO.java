@@ -2,6 +2,8 @@ package com.leadergym.control.dto;
 
 import lombok.*;
 
+import java.time.LocalDate;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -18,4 +20,5 @@ public class MemberResponseDTO {
     private String expirationDate;
     private int age;
     private Long planId;
+    private LocalDate birthDate;
 }
