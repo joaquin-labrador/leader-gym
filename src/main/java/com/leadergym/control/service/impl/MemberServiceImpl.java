@@ -81,6 +81,7 @@ public class MemberServiceImpl implements MemberService {
         existingMember.setLastName(member.getLastName());
         existingMember.setEmail(member.getEmail());
         existingMember.setPhoneNumber(member.getPhoneNumber());
+        existingMember.setBirthDate(LocalDate.parse(member.getBirthDate()));
 
         if (member.getPlanId() != null) {
             Plan plan = planRepository.findById(member.getPlanId())

@@ -4,6 +4,7 @@ import com.leadergym.control.entity.Payment;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -28,4 +29,9 @@ public interface PaymentRepository extends JpaRepository<Payment, Long> {
     //Buscar el ultimo pago por dni y fecha pero solo uno
     Optional<Payment> findTopByMember_DniOrderByStartDateDesc(String dni);
 
+    Optional<Payment> findFirstByMemberDniAndPlanIdAndStateOrderByStartDateDescIdDesc(
+            String dni,
+            Long planId,
+            String state
+    );
 }

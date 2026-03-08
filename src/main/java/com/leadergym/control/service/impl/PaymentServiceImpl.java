@@ -43,37 +43,61 @@ public class PaymentServiceImpl implements PaymentService {
         if (member == null) {
             throw new MemberNotFoundException("Member not found with DNI: " + dni);
         }
+
         Plan plan = planRepository.findById(planId)
                 .orElseThrow(() -> new PlanNotFoundException("Plan not found with id: " + planId));
-        if (amount != plan.getPrice()) {
-            throw new NotCorrectPaymentPlanException("The amount does not match the plan price. Expected: " + plan.getPrice() + ", Received: " + amount);
+
+        if (amount == null || amount <= 0) {
+            throw new IllegalArgumentException("Amount must be greater than zero");
         }
-        Payment payment = new Payment();
-        payment.setMember(member);
-        payment.setPlan(plan);
-        payment.setStartDate(LocalDate.now(Constants.ARGENTINA_TIME_ZONE));
-        payment.setEndDate(utilService.calculatePlanEndDate(payment.getStartDate(), plan.getDurationInDays()));
+
+        Payment payment = paymentRepository
+                .findFirstByMemberDniAndPlanIdAndStateOrderByStartDateDescIdDesc(
+                        dni,
+                        planId,
+                        Constants.PAYMENT_PARTIAL
+                )
+                .orElse(null);
+
+        LocalDate today = LocalDate.now(Constants.ARGENTINA_TIME_ZONE);
+
+        if (payment == null) {
+            payment = new Payment();
+            payment.setMember(member);
+            payment.setPlan(plan);
+            payment.setStartDate(today);
+            payment.setEndDate(utilService.calculatePlanEndDate(today, plan.getDurationInDays()));
+            payment.setAmountPaid(amount);
+        } else {
+            payment.setAmountPaid(payment.getAmountPaid() + amount);
+        }
+
+        // o false, según tu regla de negocio
+        // o false, según tu regla de negocio
+        if (payment.getAmountPaid() >= plan.getPrice()) {
+            payment.setState(Constants.PAYMENT_COMPLETED);
+        } else {
+            payment.setState(Constants.PAYMENT_PARTIAL);
+        }
         payment.setActive(true);
-        payment.setAmountPaid(amount);
+        member.setActive(true);
+        member.setExpirationDate(payment.getEndDate());
+
         paymentRepository.save(payment);
 
-
-        //Save payment history
         PaymentHistory paymentHistory = new PaymentHistory();
         paymentHistory.setPayment(payment);
         paymentHistory.setMemberDni(member.getDni());
         paymentHistory.setPlanName(plan.getCode());
         paymentHistory.setAmountPaid(amount);
-        paymentHistory.setPaymentDate(LocalDate.now(Constants.ARGENTINA_TIME_ZONE));
+        paymentHistory.setPaymentDate(today);
         paymentHistory.setPaymentMethod(PaymentMethod.valueOf(paymentMethod.toUpperCase()));
         paymentHistoryRepository.save(paymentHistory);
 
-
-        if (!Objects.equals(member.getPlan().getId(), planId)) {
+        if (member.getPlan() == null || !Objects.equals(member.getPlan().getId(), planId)) {
             member.setPlan(plan);
         }
-        member.setActive(true);
-        member.setExpirationDate(payment.getEndDate());
+
         memberRepository.save(member);
     }
 

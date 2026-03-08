@@ -21,4 +21,9 @@ public class Constants {
     public static final int DURATION_DAILY = 1;
 
     public static final ZoneId ARGENTINA_TIME_ZONE = ZoneId.of("America/Argentina/Buenos_Aires");
+
+    public static final String PAYMENT_PENDING = "PENDING";
+    public static final String PAYMENT_COMPLETED = "COMPLETED";
+    public static final String PAYMENT_PARTIAL = "PARTIAL";
+
 }

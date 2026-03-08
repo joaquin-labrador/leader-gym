@@ -45,6 +45,13 @@ public class CheckInServiceImpl implements CheckInService {
         }
         //buscar el ultimo recibo del miembro activo
         Payment lastPayment = paymentRepository.findTopByMember_DniAndActiveTrueOrderByEndDateDesc(dni).orElseThrow(() -> new MemberNotPayException("Member has not paid the membership fee for DNI: " + dni));
+        Plan plan = planRepository.findById(member.getPlan().getId()).orElseThrow(() -> new PlanNotFoundException("Plan not found with id: " + member.getPlan().getId()));
+
+        if (Constants.PAYMENT_PARTIAL.equals(lastPayment.getState())) {
+            throw new MemberNotPayException("Member has a partial payment and cannot check in for DNI: " + dni + ". Please complete the payment to check in." + "You" +
+                    " can complete the payment by following the instructions sent to your email or by contacting our support team." +
+                    " The remaining amount to be paid is: " + (plan.getPrice() - lastPayment.getAmountPaid()));
+        }
 
         //Comprobar si el pago esta dentro del plazo de validez, si no pasar a no activo
         if (!utilService.isPaymentValid(lastPayment.getEndDate())) {
@@ -54,7 +61,6 @@ public class CheckInServiceImpl implements CheckInService {
         }
 
         //Si tiene el plan activo y es de un mes, pero la opcion de 3 dias a la semana, validar
-        Plan plan = planRepository.findById(member.getPlan().getId()).orElseThrow(() -> new PlanNotFoundException("Plan not found with id: " + member.getPlan().getId()));
 
         if (Constants.PLAN_TYPE_MONTHLY_THREE_DAYS.equals(plan.getCode())) {
             long countOfReceipts = receiptsRepository.countByMemberDniAndDateBetween(dni, utilService.getFirstDayOfTheWeek(), utilService.getLastDayOfTheWeek());
