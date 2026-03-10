@@ -13,4 +13,5 @@ public interface ReceiptsRepository extends JpaRepository<Receipts, Long> {
     long countByMemberDniAndDateBetween(String dni, LocalDate start, LocalDate end);
     List<Receipts> findByMemberDni(String dni);
     Optional<Receipts> findTopByMember_DniOrderByDateDesc(String dni);
+    List<Receipts> findByDate(LocalDate date);
 }

@@ -1,5 +1,6 @@
 package com.leadergym.control.controller;
 
+import com.leadergym.control.dto.CheckInResponseDTO;
 import com.leadergym.control.service.CheckInService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +16,7 @@ public class CheckInController {
     private CheckInService checkInService;
 
     @PostMapping("/{dni}")
-    public ResponseEntity<Void> checkIn(@PathVariable String dni) {
-        checkInService.checkIn(dni);
-        return ResponseEntity.ok().build();
+    public ResponseEntity<CheckInResponseDTO> checkIn(@PathVariable String dni) {
+        return ResponseEntity.ok(checkInService.checkIn(dni));
     }
 }

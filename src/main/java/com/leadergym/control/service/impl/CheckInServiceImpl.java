@@ -1,6 +1,8 @@
 package com.leadergym.control.service.impl;
 
 import com.leadergym.control.common.constants.Constants;
+import com.leadergym.control.common.mapper.CheckInMapper;
+import com.leadergym.control.dto.CheckInResponseDTO;
 import com.leadergym.control.entity.Member;
 import com.leadergym.control.entity.Payment;
 import com.leadergym.control.entity.Plan;
@@ -38,7 +40,7 @@ public class CheckInServiceImpl implements CheckInService {
 
 
     @Override
-    public void checkIn(String dni) {
+    public CheckInResponseDTO checkIn(String dni) {
         Member member = memberRepository.findByDni(dni);
         if (member == null) {
             throw new MemberNotFoundException("Member not found with DNI: " + dni);
@@ -81,5 +83,7 @@ public class CheckInServiceImpl implements CheckInService {
         receipt.setMember(member);
         receipt.setDate(LocalDate.now());
         receiptsRepository.save(receipt);
+
+        return CheckInMapper.toDto(member, lastPayment);
     }
 }
