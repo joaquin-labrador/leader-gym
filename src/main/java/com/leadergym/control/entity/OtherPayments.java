@@ -1,9 +1,11 @@
 package com.leadergym.control.entity;
 
+import com.leadergym.control.common.enums.PaymentMethod;
 import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "other_payments")
@@ -28,4 +30,9 @@ public class OtherPayments {
     @Column(nullable = false)
     private BigDecimal amount;
 
+    @Column(name = "payment_method", nullable = false)
+    private PaymentMethod paymentMethod;
+
+    @Column(name = "payment_date", nullable = false)
+    private LocalDate paymentDate;
 }
