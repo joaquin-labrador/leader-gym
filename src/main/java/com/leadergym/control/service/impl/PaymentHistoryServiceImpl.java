@@ -16,8 +16,11 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 @Service
@@ -37,14 +40,25 @@ public class PaymentHistoryServiceImpl implements PaymentHistoryService {
     @Transactional(readOnly = true)
     @Override
     public List<PaymentHistoryResponseDTO> getPaymentHistoryWithFilters(PaymentHistoryFilterDTO filter) {
-        // 1. Pagos normales de membresías
-        Specification<PaymentHistory> specNormal = PaymentHistorySpecifications.withFilters(filter, Constants.ARGENTINA_TIME_ZONE);
+
+        Specification<PaymentHistory> specNormal =
+                PaymentHistorySpecifications.withFilters(filter, Constants.ARGENTINA_TIME_ZONE);
+
         List<PaymentHistoryResponseDTO> normalPayments = paymentHistoryRepository.findAll(specNormal)
                 .stream()
-                .map(paymentHistoryMapper::toDto)
+                .map(ph -> {
+                    PaymentHistoryResponseDTO dto = paymentHistoryMapper.toDto(ph);
+
+                    // Como no usamos el campo real de la entidad, parseamos la fecha ya formateada del DTO
+                    dto.setPaymentLocalDate(parsePaymentDate(dto.getPaymentDate()));
+
+                    return dto;
+                })
                 .toList();
-        // 2. Pagos sueltos (extras)
-        Specification<OtherPayments> specExtra = OtherPaymentsSpecifications.withFilters(filter, Constants.ARGENTINA_TIME_ZONE);
+
+        Specification<OtherPayments> specExtra =
+                OtherPaymentsSpecifications.withFilters(filter, Constants.ARGENTINA_TIME_ZONE);
+
         List<PaymentHistoryResponseDTO> extraPayments = otherPaymentsRepository.findAll(specExtra)
                 .stream()
                 .map(extra -> {
@@ -53,29 +67,45 @@ public class PaymentHistoryServiceImpl implements PaymentHistoryService {
                     dto.setMemberDni(extra.getMember().getDni());
                     dto.setAmountPaid(extra.getAmount().doubleValue());
                     dto.setPaymentMethod(extra.getPaymentMethod().name());
-
-                    // Le pasamos la descripción custom
                     dto.setPlanDescription("PAGO SUELTO: " + extra.getDescription());
 
-                    // Si en el DTO usas String para la fecha, la formateás:
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-                    dto.setPaymentDate(extra.getPaymentDate().format(formatter));
+                    LocalDate paymentDate = extra.getPaymentDate();
+                    dto.setPaymentLocalDate(paymentDate);
+                    dto.setPaymentDate(paymentDate.format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+
                     return dto;
                 })
                 .toList();
-        // 3. Unir ambas listas
+
         List<PaymentHistoryResponseDTO> combined = new ArrayList<>();
         combined.addAll(normalPayments);
         combined.addAll(extraPayments);
-        // 4. Ordenar: más recientes primero (por fecha en formato string y1yyy-MM-dd / id)
-        combined.sort((p1, p2) -> {
-            int dateCompare = p2.getPaymentDate().compareTo(p1.getPaymentDate());
-            if (dateCompare == 0) {
-                return p2.getPaymentId().compareTo(p1.getPaymentId());
-            }
-            return dateCompare;
-        });
+
+        combined.sort(
+                Comparator.comparing(PaymentHistoryResponseDTO::getPaymentLocalDate, Comparator.reverseOrder())
+                        .thenComparing(PaymentHistoryResponseDTO::getPaymentId, Comparator.reverseOrder())
+        );
+
         return combined;
+    }
+
+    private LocalDate parsePaymentDate(String date) {
+        if (date == null || date.isBlank()) {
+            return LocalDate.MIN;
+        }
+
+        DateTimeFormatter ddMMyyyy = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter yyyyMMdd = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+
+        try {
+            return LocalDate.parse(date, ddMMyyyy);
+        } catch (DateTimeParseException e) {
+            try {
+                return LocalDate.parse(date, yyyyMMdd);
+            } catch (DateTimeParseException ex) {
+                throw new IllegalArgumentException("Formato de fecha no soportado: " + date, ex);
+            }
+        }
     }
 
 }
