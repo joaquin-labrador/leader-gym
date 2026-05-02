@@ -32,4 +32,6 @@ public class MemberUpdateCredentialsDTO {
     private Long planId;
     @NotBlank(message = "Birth date is required")
     private String birthDate;
+    @NotBlank(message = "DNI is required")
+    private String dni;
 }
