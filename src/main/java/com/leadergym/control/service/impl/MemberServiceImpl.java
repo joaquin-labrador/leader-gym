@@ -6,7 +6,6 @@ import com.leadergym.control.dto.MemberCredentialsDTO;
 import com.leadergym.control.dto.MemberResponseDTO;
 import com.leadergym.control.dto.MemberUpdateCredentialsDTO;
 import com.leadergym.control.entity.Member;
-import com.leadergym.control.entity.Payment;
 import com.leadergym.control.entity.Plan;
 import com.leadergym.control.exception.MemberHasPaymentException;
 import com.leadergym.control.exception.MemberNotFoundException;
@@ -20,7 +19,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -107,18 +105,18 @@ public class MemberServiceImpl implements MemberService {
     @Override
     public Page<MemberResponseDTO> getPaginatedMembers(Pageable pageable) {
 
-        Pageable finalPageable = pageable.getSort().isUnsorted()
-                ? PageRequest.of(
+        Pageable finalPageable = PageRequest.of(
                 pageable.getPageNumber(),
-                pageable.getPageSize(),
-                Sort.by("lastName").ascending().and(Sort.by("firstName").ascending())
-        )
-                : pageable;
+                pageable.getPageSize()
+        );
 
-        // Fetch members with pagination
-        Page<Member> memberPage = memberRepository.findAll(finalPageable);
-        //Validate if members are active or not
-        // Map members to DTOs
+        LocalDate today = LocalDate.now(Constants.ARGENTINA_TIME_ZONE);
+
+        Page<Member> memberPage = memberRepository.findAllOrderByActiveFirst(
+                today,
+                finalPageable
+        );
+
         return memberPage.map(member -> {
             boolean isActive = isMemberActive(member);
             member.setActive(isActive);
@@ -126,14 +124,18 @@ public class MemberServiceImpl implements MemberService {
         });
     }
 
-
     private LocalDate getExpirationDate(Integer durationInDays) {
         return utilService.calculateExpiration(durationInDays);
     }
 
     private boolean isMemberActive(@NotNull Member member) {
-        Payment lastPayment = paymentRepository.findTopByMember_DniOrderByStartDateDesc(member.getDni()).stream().findFirst().orElse(null);
-        return lastPayment != null && lastPayment.isActive() && lastPayment.getEndDate().isAfter(LocalDate.now(Constants.ARGENTINA_TIME_ZONE));
+        return paymentRepository
+                .findTopByMember_DniOrderByStartDateDesc(member.getDni())
+                .map(lastPayment ->
+                        lastPayment.isActive()
+                                && lastPayment.getEndDate().isAfter(LocalDate.now(Constants.ARGENTINA_TIME_ZONE))
+                )
+                .orElse(false);
     }
 }
 
