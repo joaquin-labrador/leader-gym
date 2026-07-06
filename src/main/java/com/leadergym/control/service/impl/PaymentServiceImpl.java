@@ -38,7 +38,7 @@ public class PaymentServiceImpl implements PaymentService {
     private PaymentHistoryRepository paymentHistoryRepository;
 
     @Override
-    public void processPayment(String dni, Long planId, Double amount, String paymentMethod) {
+    public void processPayment(String dni, Long planId, Double amount, String paymentMethod, String paymentDate) {
         Member member = memberRepository.findByDni(dni);
         if (member == null) {
             throw new MemberNotFoundException("Member not found with DNI: " + dni);
@@ -60,13 +60,14 @@ public class PaymentServiceImpl implements PaymentService {
                 .orElse(null);
 
         LocalDate today = LocalDate.now(Constants.ARGENTINA_TIME_ZONE);
+        LocalDate paymentStartDate = paymentDate != null ? LocalDate.parse(paymentDate) : today;
 
         if (payment == null) {
             payment = new Payment();
             payment.setMember(member);
             payment.setPlan(plan);
-            payment.setStartDate(today);
-            payment.setEndDate(utilService.calculatePlanEndDate(today, plan.getDurationInDays()));
+            payment.setStartDate(paymentStartDate);
+            payment.setEndDate(utilService.calculatePlanEndDate(paymentStartDate, plan.getDurationInDays()));
             payment.setAmountPaid(amount);
         } else {
             payment.setAmountPaid(payment.getAmountPaid() + amount);
@@ -90,7 +91,7 @@ public class PaymentServiceImpl implements PaymentService {
         paymentHistory.setMemberDni(member.getDni());
         paymentHistory.setPlanName(plan.getCode());
         paymentHistory.setAmountPaid(amount);
-        paymentHistory.setPaymentDate(today);
+        paymentHistory.setPaymentDate(paymentStartDate);
         paymentHistory.setPaymentMethod(PaymentMethod.valueOf(paymentMethod.toUpperCase()));
         paymentHistoryRepository.save(paymentHistory);
 

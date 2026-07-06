@@ -19,7 +19,7 @@ public class PaymentController {
 
     @PostMapping
     public ResponseEntity<Void> processPayment(@Valid @RequestBody @NotNull PaymentRequestDTO paymentRequest) {
-        paymentService.processPayment(paymentRequest.getDni(), paymentRequest.getPlanId(), paymentRequest.getAmount(), paymentRequest.getPaymentMethod());
+        paymentService.processPayment(paymentRequest.getDni(), paymentRequest.getPlanId(), paymentRequest.getAmount(), paymentRequest.getPaymentMethod(), paymentRequest.getPaymentDate().toString());
         return ResponseEntity.ok().build();
     }
 
